@@ -1,1 +1,4 @@
 - Create `shema.grahpql`
+- Generate backend api code
+  - Handle CORS
+  - Implement resolvers
