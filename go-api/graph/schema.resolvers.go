@@ -8,14 +8,34 @@ import (
 	"api/graph/model"
 	"context"
 	"fmt"
+	"time"
 )
 
 func (r *mutationResolver) CreateUser(ctx context.Context, name string) (*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
+	id := fmt.Sprintf("%d", r.userCounter)
+	user := &model.User{
+		ID:    id,
+		Name:  name,
+		Posts: []*model.Post{},
+	}
+	r.users[id] = user
+	r.userCounter++
+	return user, nil
 }
 
 func (r *mutationResolver) Post(ctx context.Context, userID string, text string) (*model.Post, error) {
-	panic(fmt.Errorf("not implemented"))
+	id := fmt.Sprintf("%d", r.postCounter)
+	post := &model.Post{
+		ID:        id,
+		Text:      text,
+		User:      r.users[userID],
+		IsReplyOf: nil,
+		CreatedAt: time.Now().Format(time.RFC3339),
+		Replies:   []*model.Post{},
+	}
+	r.posts[id] = post
+	r.postCounter++
+	return post, nil
 }
 
 func (r *mutationResolver) Reply(ctx context.Context, text string, postID string, userID string) (*model.Post, error) {
@@ -27,7 +47,11 @@ func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error
 }
 
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
+	users := make([]*model.User, 0, len(r.users))
+	for _, user := range r.users {
+		users = append(users, user)
+	}
+	return users, nil
 }
 
 func (r *queryResolver) Post(ctx context.Context, id string) (*model.Post, error) {
@@ -35,7 +59,13 @@ func (r *queryResolver) Post(ctx context.Context, id string) (*model.Post, error
 }
 
 func (r *queryResolver) RootPosts(ctx context.Context) ([]*model.Post, error) {
-	panic(fmt.Errorf("not implemented"))
+	posts := make([]*model.Post, 0)
+	for _, post := range r.posts {
+		if post.IsReplyOf == nil {
+			posts = append(posts, post)
+		}
+	}
+	return posts, nil
 }
 
 func (r *subscriptionResolver) Posts(ctx context.Context) (<-chan []*model.Post, error) {
