@@ -1,5 +1,11 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Code generation library
+- https://www.graphql-code-generator.com/
+
+## Apollo Client library
+- https://www.apollographql.com/docs/react/
+
 ## Available Scripts
 
 ### `npm start`
