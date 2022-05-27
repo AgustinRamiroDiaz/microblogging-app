@@ -35,7 +35,7 @@ func main() {
 	// Add CORS middleware around every request
 	// See https://github.com/rs/cors for full option listing
 	router.Use(cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:8080"},
+		AllowedOrigins:   []string{"*"},
 		AllowCredentials: true,
 		Debug:            true,
 	}).Handler)
@@ -44,10 +44,8 @@ func main() {
 		Upgrader: websocket.Upgrader{
 			CheckOrigin: func(r *http.Request) bool {
 				// Check against your desired domains here
-				return r.Host == "example.org"
+				return true
 			},
-			ReadBufferSize:  1024,
-			WriteBufferSize: 1024,
 		},
 	})
 
