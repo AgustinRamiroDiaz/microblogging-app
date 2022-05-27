@@ -1,0 +1,5 @@
+- GraphQL code generation: 
+  - Library: https://gqlgen.com/
+  - Config file: `gqlgen.yml`
+  - Init command: `go run github.com/99designs/gqlgen init`
+  - Code generation command: `go run github.com/99designs/gqlgen generate`
