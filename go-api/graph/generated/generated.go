@@ -69,8 +69,8 @@ type ComplexityRoot struct {
 	}
 
 	Subscription struct {
-		Post  func(childComplexity int, id string) int
-		Posts func(childComplexity int) int
+		Post      func(childComplexity int, id string) int
+		RootPosts func(childComplexity int) int
 	}
 
 	User struct {
@@ -92,7 +92,7 @@ type QueryResolver interface {
 	RootPosts(ctx context.Context) ([]*model.Post, error)
 }
 type SubscriptionResolver interface {
-	Posts(ctx context.Context) (<-chan []*model.Post, error)
+	RootPosts(ctx context.Context) (<-chan []*model.Post, error)
 	Post(ctx context.Context, id string) (<-chan *model.Post, error)
 }
 
@@ -239,12 +239,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Subscription.Post(childComplexity, args["id"].(string)), true
 
-	case "Subscription.posts":
-		if e.complexity.Subscription.Posts == nil {
+	case "Subscription.rootPosts":
+		if e.complexity.Subscription.RootPosts == nil {
 			break
 		}
 
-		return e.complexity.Subscription.Posts(childComplexity), true
+		return e.complexity.Subscription.RootPosts(childComplexity), true
 
 	case "User.id":
 		if e.complexity.User.ID == nil {
@@ -380,7 +380,7 @@ type Mutation {
 }
 
 type Subscription {
-  posts: [Post!]!
+  rootPosts: [Post!]!
   post(id: ID!): Post
 }
 `, BuiltIn: false},
@@ -1415,8 +1415,8 @@ func (ec *executionContext) fieldContext_Query___schema(ctx context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _Subscription_posts(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
-	fc, err := ec.fieldContext_Subscription_posts(ctx, field)
+func (ec *executionContext) _Subscription_rootPosts(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscription_rootPosts(ctx, field)
 	if err != nil {
 		return nil
 	}
@@ -1429,7 +1429,7 @@ func (ec *executionContext) _Subscription_posts(ctx context.Context, field graph
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().Posts(rctx)
+		return ec.resolvers.Subscription().RootPosts(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1460,7 +1460,7 @@ func (ec *executionContext) _Subscription_posts(ctx context.Context, field graph
 	}
 }
 
-func (ec *executionContext) fieldContext_Subscription_posts(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Subscription_rootPosts(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Subscription",
 		Field:      field,
@@ -3743,8 +3743,8 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 	}
 
 	switch fields[0].Name {
-	case "posts":
-		return ec._Subscription_posts(ctx, fields[0])
+	case "rootPosts":
+		return ec._Subscription_rootPosts(ctx, fields[0])
 	case "post":
 		return ec._Subscription_post(ctx, fields[0])
 	default:
