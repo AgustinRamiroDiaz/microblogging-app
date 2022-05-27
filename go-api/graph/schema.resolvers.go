@@ -18,62 +18,122 @@ func (r *mutationResolver) CreateUser(ctx context.Context, name string) (*model.
 		Name:  name,
 		Posts: []*model.Post{},
 	}
-	r.users[id] = user
+	r.UserStorage[id] = user
 	r.userCounter++
 	return user, nil
 }
 
 func (r *mutationResolver) Post(ctx context.Context, userID string, text string) (*model.Post, error) {
+	user := r.UserStorage[userID]
 	id := fmt.Sprintf("%d", r.postCounter)
 	post := &model.Post{
 		ID:        id,
 		Text:      text,
-		User:      r.users[userID],
+		User:      user,
 		IsReplyOf: nil,
 		CreatedAt: time.Now().Format(time.RFC3339),
 		Replies:   []*model.Post{},
 	}
-	r.posts[id] = post
+	user.Posts = append(user.Posts, post)
+	r.PostStorage[id] = post
 	r.postCounter++
+
+	for _, subscriber := range r.PostSubscribers[id] {
+		subscriber <- post
+	}
+
 	return post, nil
 }
 
 func (r *mutationResolver) Reply(ctx context.Context, text string, postID string, userID string) (*model.Post, error) {
-	panic(fmt.Errorf("not implemented"))
+	post, ok := r.PostStorage[postID]
+	if !ok {
+		return nil, fmt.Errorf("post not found")
+	}
+	id := fmt.Sprintf("%d", r.postCounter)
+	user := r.UserStorage[userID]
+	reply := &model.Post{
+		ID:        id,
+		Text:      text,
+		User:      user,
+		IsReplyOf: post,
+		CreatedAt: time.Now().Format(time.RFC3339),
+		Replies:   []*model.Post{},
+	}
+	post.Replies = append(post.Replies, reply)
+	user.Posts = append(user.Posts, reply)
+	r.PostStorage[id] = reply
+	r.postCounter++
+	return reply, nil
 }
 
 func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
+	if user, ok := r.UserStorage[id]; ok {
+		return user, nil
+	}
+	return nil, fmt.Errorf("user not found")
 }
 
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
-	users := make([]*model.User, 0, len(r.users))
-	for _, user := range r.users {
+	users := make([]*model.User, 0, len(r.UserStorage))
+	for _, user := range r.UserStorage {
 		users = append(users, user)
 	}
 	return users, nil
 }
 
 func (r *queryResolver) Post(ctx context.Context, id string) (*model.Post, error) {
-	panic(fmt.Errorf("not implemented"))
+	if post, ok := r.PostStorage[id]; ok {
+		return post, nil
+	}
+	return nil, fmt.Errorf("post not found")
 }
 
 func (r *queryResolver) RootPosts(ctx context.Context) ([]*model.Post, error) {
-	posts := make([]*model.Post, 0)
-	for _, post := range r.posts {
+	return getRootPosts(r.PostStorage), nil
+}
+
+func (r *subscriptionResolver) RootPosts(ctx context.Context) (<-chan []*model.Post, error) {
+	ch := make(chan []*model.Post)
+	r.RootPostSubscribers = append(r.RootPostSubscribers, ch)
+	go func() {
+		ch <- getRootPosts(r.PostStorage)
+		<-ctx.Done()
+		for i, subscriber := range r.RootPostSubscribers {
+			if subscriber == ch {
+				r.RootPostSubscribers = append(r.RootPostSubscribers[:i], r.RootPostSubscribers[i+1:]...)
+				break
+			}
+		}
+	}()
+	return ch, nil
+}
+
+func getRootPosts(postsMap map[string]*model.Post) []*model.Post {
+	posts := []*model.Post{}
+	for _, post := range postsMap {
 		if post.IsReplyOf == nil {
 			posts = append(posts, post)
 		}
 	}
-	return posts, nil
-}
-
-func (r *subscriptionResolver) RootPosts(ctx context.Context) (<-chan []*model.Post, error) {
-	panic(fmt.Errorf("not implemented"))
+	return posts
 }
 
 func (r *subscriptionResolver) Post(ctx context.Context, id string) (<-chan *model.Post, error) {
-	panic(fmt.Errorf("not implemented"))
+	post := r.PostStorage[id]
+	ch := make(chan *model.Post)
+	r.PostSubscribers[id] = append(r.PostSubscribers[id], ch)
+	go func() {
+		ch <- post
+		<-ctx.Done()
+		for i, subscriber := range r.PostSubscribers[id] {
+			if subscriber == ch {
+				r.PostSubscribers[id] = append(r.PostSubscribers[id][:i], r.PostSubscribers[id][i+1:]...)
+				break
+			}
+		}
+	}()
+	return ch, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.

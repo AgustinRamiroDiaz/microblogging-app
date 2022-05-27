@@ -3,6 +3,7 @@ package main
 import (
 	"api/graph"
 	"api/graph/generated"
+	"api/graph/model"
 	"log"
 	"net/http"
 	"os"
@@ -23,7 +24,11 @@ func main() {
 		port = defaultPort
 	}
 
-	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
+	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{
+		UserStorage:     map[string]*model.User{},
+		PostStorage:     map[string]*model.Post{},
+		PostSubscribers: map[string][]chan *model.Post{},
+	}}))
 
 	router := chi.NewRouter()
 

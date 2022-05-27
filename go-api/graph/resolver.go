@@ -7,8 +7,10 @@ import "api/graph/model"
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	users       map[string]*model.User
-	userCounter int
-	posts       map[string]*model.Post
-	postCounter int
+	UserStorage         map[string]*model.User
+	userCounter         int
+	PostStorage         map[string]*model.Post
+	postCounter         int
+	PostSubscribers     map[string][]chan *model.Post
+	RootPostSubscribers []chan []*model.Post
 }
