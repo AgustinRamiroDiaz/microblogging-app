@@ -2,3 +2,5 @@
 - Generate backend api code
   - Handle CORS
   - Implement resolvers
+- Separate schema into multiple files (types, queries, mutations, subscriptions)
+- Create frontend app
