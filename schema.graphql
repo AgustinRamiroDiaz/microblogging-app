@@ -27,6 +27,6 @@ type Mutation {
 }
 
 type Subscription {
-  posts: [Post!]!
+  rootPosts: [Post!]!
   post(id: ID!): Post
 }
