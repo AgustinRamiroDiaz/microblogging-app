@@ -1,0 +1,5 @@
+type Mutation {
+  createUser(name: String!): User
+  post(userId: ID!, text: String!): Post
+  reply(text: String!, postId: ID!, userId: ID!): Post
+}

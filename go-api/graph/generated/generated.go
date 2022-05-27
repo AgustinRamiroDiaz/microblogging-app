@@ -351,7 +351,25 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "../../../schema.graphql", Input: `type Post {
+	{Name: "../../../graphql-schema/mutations.graphql", Input: `type Mutation {
+  createUser(name: String!): User
+  post(userId: ID!, text: String!): Post
+  reply(text: String!, postId: ID!, userId: ID!): Post
+}
+`, BuiltIn: false},
+	{Name: "../../../graphql-schema/queries.graphql", Input: `type Query {
+  user(id: ID!): User
+  users: [User!]!
+  post(id: ID!): Post
+  rootPosts: [Post!]!
+}
+`, BuiltIn: false},
+	{Name: "../../../graphql-schema/subscriptions.graphql", Input: `type Subscription {
+  rootPosts: [Post!]!
+  post(id: ID!): Post
+}
+`, BuiltIn: false},
+	{Name: "../../../graphql-schema/types.graphql", Input: `type Post {
   id: ID!
   text: String!
   createdAt: String!
@@ -364,24 +382,6 @@ type User {
   id: ID!
   name: String!
   posts: [Post!]!
-}
-
-type Query {
-  user(id: ID!): User
-  users: [User!]!
-  post(id: ID!): Post
-  rootPosts: [Post!]!
-}
-
-type Mutation {
-  createUser(name: String!): User
-  post(userId: ID!, text: String!): Post
-  reply(text: String!, postId: ID!, userId: ID!): Post
-}
-
-type Subscription {
-  rootPosts: [Post!]!
-  post(id: ID!): Post
 }
 `, BuiltIn: false},
 }
