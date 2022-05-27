@@ -24,7 +24,11 @@ func (r *mutationResolver) CreateUser(ctx context.Context, name string) (*model.
 }
 
 func (r *mutationResolver) Post(ctx context.Context, userID string, text string) (*model.Post, error) {
-	user := r.UserStorage[userID]
+	user, ok := r.UserStorage[userID]
+	if !ok {
+		return nil, fmt.Errorf("user not found")
+	}
+
 	id := fmt.Sprintf("%d", r.postCounter)
 	post := &model.Post{
 		ID:        id,
@@ -38,8 +42,8 @@ func (r *mutationResolver) Post(ctx context.Context, userID string, text string)
 	r.PostStorage[id] = post
 	r.postCounter++
 
-	for _, subscriber := range r.PostSubscribers[id] {
-		subscriber <- post
+	for _, subscriber := range r.RootPostSubscribers {
+		subscriber <- getRootPosts(r.PostStorage)
 	}
 
 	return post, nil
@@ -64,7 +68,38 @@ func (r *mutationResolver) Reply(ctx context.Context, text string, postID string
 	user.Posts = append(user.Posts, reply)
 	r.PostStorage[id] = reply
 	r.postCounter++
+
+	for _, p := range getPostAndReplies(getRootPost(post)) {
+		subscribers, ok := r.PostSubscribers[p.ID]
+		if !ok {
+			continue
+		}
+		for _, subscriber := range subscribers {
+			subscriber <- p
+		}
+	}
+
+	for _, subscriber := range r.RootPostSubscribers {
+		subscriber <- getRootPosts(r.PostStorage)
+	}
+
 	return reply, nil
+}
+
+func getRootPost(post *model.Post) *model.Post {
+	for post.IsReplyOf != nil {
+		post = post.IsReplyOf
+	}
+	return post
+}
+
+// getPostAndReplies returns all post and all its replies recursively.
+func getPostAndReplies(post *model.Post) []*model.Post {
+	posts := []*model.Post{post}
+	for _, reply := range post.Replies {
+		posts = append(posts, getPostAndReplies(reply)...)
+	}
+	return posts
 }
 
 func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
