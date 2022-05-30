@@ -12,11 +12,12 @@ const completeSchema = readdirSync(schemasFolder)
   .map(x => readFileSync(join(schemasFolder, x), 'utf-8'))
   .join('\n\n');
 
-const tmpFile = join(tmpdir(), 'microblogging-app.graphqls')
+const tmpFile = join(tmpdir(), 'microblogging-app.graphqls');
 writeFileSync(tmpFile, completeSchema);
 
 module.exports = {
   client: {
+    excludes: ['**/generated/**/*'],
     service: {
       name: 'project-name',
       localSchemaFile: tmpFile,
