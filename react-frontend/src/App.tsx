@@ -36,12 +36,13 @@ function PostsList() {
   if (error) return <>`Error! ${error.message}` </>
 
   return <>
-    <ul>
-      {data?.rootPosts.map(post =>
-        <li key={post.id}>
-          <Link href={`/post/${post.id}`}>{post.text}</Link>
-        </li>)}
-    </ul>
+    {data?.rootPosts.map(post =>
+      <Link href={`/post/${post.id}`}>
+        <p>
+          {post.text}
+        </p>
+      </Link>
+    )}
   </>
 }
 
@@ -106,15 +107,19 @@ function Post({ id }: { id: string }) {
       {post.replies.map(reply =>
         <li key={reply.id}>
           <Link href={`/post/${reply.id}`}>
-            <p>{reply.user.name} replied at {reply.createdAt}</p>
-            <h2>{reply.text}</h2>
+            <div>
+              <p>{reply.user.name} replied at {reply.createdAt}</p>
+              <h2>{reply.text}</h2>
+            </div>
           </Link>
 
-          {reply.replies?.map(replyOfReply =>
+          {reply.replies.map(replyOfReply =>
             <Link href={`/post/${replyOfReply.id}`}>
-              TABULADO
-              <p>{replyOfReply.user.name} replied at {replyOfReply.createdAt}</p>
-              <h2>{replyOfReply.text}</h2>
+              <>
+                TABULADO
+                <p>{replyOfReply.user.name} replied at {replyOfReply.createdAt}</p>
+                <h2>{replyOfReply.text}</h2>
+              </>
             </Link>
           )}
 
