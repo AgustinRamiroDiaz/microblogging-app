@@ -2,28 +2,33 @@ import logo from './logo.svg';
 import './App.css';
 
 import gql from 'graphql-tag'
-import { useGetRootPostsQuery, useGetPostQuery } from './generated/graphql'
-import { useState } from 'react';
+import { useGetRootPostsQuery, useGetPostWithRepliesQuery } from './generated/graphql'
+import { Route, Link } from 'wouter';
 
-gql`
-query getRootPosts {
-  rootPosts {
-    text
-    id
+
+function Router() {
+  return (
+    <>
+      <Route path="/post/:id">
+        {(params) => <Post id={params.id} />}
+      </Route>
+      <Route path="/">
+        <PostsList />
+      </Route>
+    </>
+  );
+}
+
+
+function PostsList() {
+  gql`
+  query getRootPosts {
+    rootPosts {
+      text
+      id
+    }
   }
-}
-`
-
-function RootPosts() {
-  const [postId, setPostId] = useState(null as string | null);
-
-  if (postId === null) return <PostsList onSelect={setPostId} />
-
-  return <Post id={postId} onExit={() => setPostId(null)} />
-}
-
-
-function PostsList({ onSelect }: { onSelect: (postId: string) => void }) {
+  `
   const { data, loading, error } = useGetRootPostsQuery()
 
   if (loading) return <>'Loading...'</>
@@ -34,31 +39,51 @@ function PostsList({ onSelect }: { onSelect: (postId: string) => void }) {
     <ul>
       {data?.rootPosts.map(post =>
         <li key={post.id}>
-
-          <button onClick={() => onSelect(post.id)}>{post.text}</button>
+          <Link href={`/post/${post.id}`}>{post.text}</Link>
         </li>)}
     </ul>
   </>
 }
 
 
-function Post({ id, onExit }: { id: string, onExit: () => void }) {
+function Post({ id }: { id: string }) {
   gql`
-    query getPost($id: ID!) {
+    query getPostWithReplies($id: ID!) {
       post(id: $id) {
         text
+        user {
+          name
+        }
+        createdAt
+        replies {
+          user {
+            name
+          }
+          text
+          createdAt
+        }
+        isReplyOf {
+          id
+          user {
+            name
+          }
+        }
       }
     }
   `
-  const { data, loading, error } = useGetPostQuery({ variables: { id } })
+  const { data, loading, error } = useGetPostWithRepliesQuery({ variables: { id } })
 
-  if (loading) return <>'Loading...'</>
+  if (loading || !data) return <>'Loading...'</>
 
   if (error) return <>`Error! ${error.message}` </>
 
+  const post = data.post
+  if (!post) return <>'Post not found'</>
+
   return <>
-    id 0 : {data?.post?.text}
-    <button onClick={onExit}>Go back</button>
+    {!post.isReplyOf && <h6>{post.user.name} posted at {post.createdAt}</h6>}
+    {post.isReplyOf && <h6>{post.user.name} replied to {post.isReplyOf.user.name} at {post.createdAt}</h6>}
+    <h1>{post.text}</h1>
   </>
 
 }
@@ -67,7 +92,7 @@ function App() {
   return (
     <header className="App-header">
       <img src={logo} className="App-logo" alt="logo" />
-      <RootPosts />
+      <Router />
     </header>
   );
 }
