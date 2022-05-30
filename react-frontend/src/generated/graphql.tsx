@@ -96,7 +96,7 @@ export type GetPostWithRepliesQueryVariables = Exact<{
 }>;
 
 
-export type GetPostWithRepliesQuery = { __typename?: 'Query', post?: { __typename?: 'Post', text: string, createdAt: string, user: { __typename?: 'User', name: string }, replies: Array<{ __typename?: 'Post', text: string, createdAt: string, user: { __typename?: 'User', name: string } }>, isReplyOf?: { __typename?: 'Post', id: string, user: { __typename?: 'User', name: string } } | null } | null };
+export type GetPostWithRepliesQuery = { __typename?: 'Query', post?: { __typename?: 'Post', text: string, createdAt: string, user: { __typename?: 'User', name: string }, replies: Array<{ __typename?: 'Post', text: string, createdAt: string, id: string, user: { __typename?: 'User', name: string }, replies: Array<{ __typename?: 'Post', text: string, createdAt: string, id: string, user: { __typename?: 'User', name: string } }> }>, isReplyOf?: { __typename?: 'Post', id: string, user: { __typename?: 'User', name: string } } | null } | null };
 
 
 export const GetRootPostsDocument = gql`
@@ -148,6 +148,15 @@ export const GetPostWithRepliesDocument = gql`
       }
       text
       createdAt
+      id
+      replies {
+        user {
+          name
+        }
+        text
+        createdAt
+        id
+      }
     }
     isReplyOf {
       id

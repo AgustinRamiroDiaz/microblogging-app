@@ -61,6 +61,15 @@ function Post({ id }: { id: string }) {
           }
           text
           createdAt
+          id
+          replies {
+            user {
+              name
+            }
+            text
+            createdAt
+            id
+          }
         }
         isReplyOf {
           id
@@ -81,9 +90,36 @@ function Post({ id }: { id: string }) {
   if (!post) return <>'Post not found'</>
 
   return <>
-    {!post.isReplyOf && <h6>{post.user.name} posted at {post.createdAt}</h6>}
-    {post.isReplyOf && <h6>{post.user.name} replied to {post.isReplyOf.user.name} at {post.createdAt}</h6>}
+    <Link href='/'><p>
+      Go home
+    </p>
+    </Link>
+    {!post.isReplyOf && <p>{post.user.name} posted at {post.createdAt}</p>}
+    {
+      post.isReplyOf && <Link href={`/post/${post.isReplyOf.id}`}>
+        <p>{post.user.name} replied to {post.isReplyOf.user.name} at {post.createdAt}</p>
+      </Link>
+    }
+
     <h1>{post.text}</h1>
+    <ul>
+      {post.replies.map(reply =>
+        <li key={reply.id}>
+          <Link href={`/post/${reply.id}`}>
+            <p>{reply.user.name} replied at {reply.createdAt}</p>
+            <h2>{reply.text}</h2>
+          </Link>
+
+          {reply.replies?.map(replyOfReply =>
+            <Link href={`/post/${replyOfReply.id}`}>
+              TABULADO
+              <p>{replyOfReply.user.name} replied at {replyOfReply.createdAt}</p>
+              <h2>{replyOfReply.text}</h2>
+            </Link>
+          )}
+
+        </li>)}
+    </ul>
   </>
 
 }
