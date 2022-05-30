@@ -1,14 +1,11 @@
 overwrite: true
 schema: "../graphql-schema/*.graphql"
-documents: "src/**/*.{ts,tsx}"
+documents: 
+  - "src/**/*.{ts,tsx}" # scan all ts and tsx files in src folder
+  - "!src/generated/graphql.tsx" # ignore the generated file
 generates:
   src/generated/graphql.tsx:
     plugins:
       - typescript
-      - typescript-operations
+      - typescript-operations 
       - typescript-react-apollo
-    config:
-      fetcher: fetch
-  ./graphql.schema.json:
-    plugins:
-      - "introspection"
