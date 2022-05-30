@@ -2,11 +2,11 @@ import logo from './logo.svg';
 import './App.css';
 
 import gql from 'graphql-tag'
-import { useRootPostsQuery } from './generated/graphql'
+import { useGetRootPostsQuery, useGetPostQuery } from './generated/graphql'
 
-function Test() {
+function RootPosts() {
   gql`
-    query RootPosts {
+    query getRootPosts {
       rootPosts {
         text
         id
@@ -14,14 +14,12 @@ function Test() {
     }
     `
 
-  const { data, loading, error } = useRootPostsQuery()
-  console.log(loading)
-  console.log(error)
+
+  const { data, loading, error } = useGetRootPostsQuery()
+
   if (loading) return <>'Loading...'</>
 
   if (error) return <>`Error! ${error.message}` </>
-
-  console.log(data?.rootPosts)
 
   return <>
     <ul>
@@ -30,11 +28,33 @@ function Test() {
   </>
 }
 
+
+function Post(props: { id: string }) {
+  gql`
+    query getPost($id: ID!) {
+      post(id: $id) {
+        text
+      }
+    }
+  `
+  const { data, loading, error } = useGetPostQuery({ variables: { id: props.id } })
+
+  if (loading) return <>'Loading...'</>
+
+  if (error) return <>`Error! ${error.message}` </>
+
+  return <>
+    id 0 : {data?.post?.text}
+  </>
+
+}
+
 function App() {
   return (
     <header className="App-header">
       <img src={logo} className="App-logo" alt="logo" />
-      <Test />
+      <RootPosts />
+      <Post id='0' />
     </header>
   );
 }

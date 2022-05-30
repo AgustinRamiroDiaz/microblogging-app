@@ -86,14 +86,21 @@ export type User = {
   posts: Array<Post>;
 };
 
-export type RootPostsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetRootPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type RootPostsQuery = { __typename?: 'Query', rootPosts: Array<{ __typename?: 'Post', text: string, id: string }> };
+export type GetRootPostsQuery = { __typename?: 'Query', rootPosts: Array<{ __typename?: 'Post', text: string, id: string }> };
+
+export type GetPostQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
 
 
-export const RootPostsDocument = gql`
-    query RootPosts {
+export type GetPostQuery = { __typename?: 'Query', post?: { __typename?: 'Post', text: string } | null };
+
+
+export const GetRootPostsDocument = gql`
+    query getRootPosts {
   rootPosts {
     text
     id
@@ -102,28 +109,63 @@ export const RootPostsDocument = gql`
     `;
 
 /**
- * __useRootPostsQuery__
+ * __useGetRootPostsQuery__
  *
- * To run a query within a React component, call `useRootPostsQuery` and pass it any options that fit your needs.
- * When your component renders, `useRootPostsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetRootPostsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRootPostsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useRootPostsQuery({
+ * const { data, loading, error } = useGetRootPostsQuery({
  *   variables: {
  *   },
  * });
  */
-export function useRootPostsQuery(baseOptions?: Apollo.QueryHookOptions<RootPostsQuery, RootPostsQueryVariables>) {
+export function useGetRootPostsQuery(baseOptions?: Apollo.QueryHookOptions<GetRootPostsQuery, GetRootPostsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<RootPostsQuery, RootPostsQueryVariables>(RootPostsDocument, options);
+        return Apollo.useQuery<GetRootPostsQuery, GetRootPostsQueryVariables>(GetRootPostsDocument, options);
       }
-export function useRootPostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RootPostsQuery, RootPostsQueryVariables>) {
+export function useGetRootPostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRootPostsQuery, GetRootPostsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<RootPostsQuery, RootPostsQueryVariables>(RootPostsDocument, options);
+          return Apollo.useLazyQuery<GetRootPostsQuery, GetRootPostsQueryVariables>(GetRootPostsDocument, options);
         }
-export type RootPostsQueryHookResult = ReturnType<typeof useRootPostsQuery>;
-export type RootPostsLazyQueryHookResult = ReturnType<typeof useRootPostsLazyQuery>;
-export type RootPostsQueryResult = Apollo.QueryResult<RootPostsQuery, RootPostsQueryVariables>;
+export type GetRootPostsQueryHookResult = ReturnType<typeof useGetRootPostsQuery>;
+export type GetRootPostsLazyQueryHookResult = ReturnType<typeof useGetRootPostsLazyQuery>;
+export type GetRootPostsQueryResult = Apollo.QueryResult<GetRootPostsQuery, GetRootPostsQueryVariables>;
+export const GetPostDocument = gql`
+    query getPost($id: ID!) {
+  post(id: $id) {
+    text
+  }
+}
+    `;
+
+/**
+ * __useGetPostQuery__
+ *
+ * To run a query within a React component, call `useGetPostQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPostQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPostQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetPostQuery(baseOptions: Apollo.QueryHookOptions<GetPostQuery, GetPostQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPostQuery, GetPostQueryVariables>(GetPostDocument, options);
+      }
+export function useGetPostLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPostQuery, GetPostQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPostQuery, GetPostQueryVariables>(GetPostDocument, options);
+        }
+export type GetPostQueryHookResult = ReturnType<typeof useGetPostQuery>;
+export type GetPostLazyQueryHookResult = ReturnType<typeof useGetPostLazyQuery>;
+export type GetPostQueryResult = Apollo.QueryResult<GetPostQuery, GetPostQueryVariables>;
