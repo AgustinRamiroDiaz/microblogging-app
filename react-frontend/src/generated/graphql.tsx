@@ -91,6 +91,11 @@ export type GetRootPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetRootPostsQuery = { __typename?: 'Query', rootPosts: Array<{ __typename?: 'Post', text: string, id: string, createdAt: string, user: { __typename?: 'User', name: string }, replies: Array<{ __typename?: 'Post', text: string, createdAt: string, id: string, user: { __typename?: 'User', name: string }, replies: Array<{ __typename?: 'Post', text: string, createdAt: string, id: string, user: { __typename?: 'User', name: string } }> }> }> };
 
+export type SubRootPostsSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SubRootPostsSubscription = { __typename?: 'Subscription', rootPosts: Array<{ __typename?: 'Post', text: string, id: string, createdAt: string, user: { __typename?: 'User', name: string }, replies: Array<{ __typename?: 'Post', text: string, createdAt: string, id: string, user: { __typename?: 'User', name: string }, replies: Array<{ __typename?: 'Post', text: string, createdAt: string, id: string, user: { __typename?: 'User', name: string } }> }> }> };
+
 export type GetPostWithRepliesQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
@@ -154,6 +159,56 @@ export function useGetRootPostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetRootPostsQueryHookResult = ReturnType<typeof useGetRootPostsQuery>;
 export type GetRootPostsLazyQueryHookResult = ReturnType<typeof useGetRootPostsLazyQuery>;
 export type GetRootPostsQueryResult = Apollo.QueryResult<GetRootPostsQuery, GetRootPostsQueryVariables>;
+export const SubRootPostsDocument = gql`
+    subscription subRootPosts {
+  rootPosts {
+    text
+    id
+    user {
+      name
+    }
+    createdAt
+    replies {
+      user {
+        name
+      }
+      text
+      createdAt
+      id
+      replies {
+        user {
+          name
+        }
+        text
+        createdAt
+        id
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useSubRootPostsSubscription__
+ *
+ * To run a query within a React component, call `useSubRootPostsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useSubRootPostsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubRootPostsSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSubRootPostsSubscription(baseOptions?: Apollo.SubscriptionHookOptions<SubRootPostsSubscription, SubRootPostsSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<SubRootPostsSubscription, SubRootPostsSubscriptionVariables>(SubRootPostsDocument, options);
+      }
+export type SubRootPostsSubscriptionHookResult = ReturnType<typeof useSubRootPostsSubscription>;
+export type SubRootPostsSubscriptionResult = Apollo.SubscriptionResult<SubRootPostsSubscription>;
 export const GetPostWithRepliesDocument = gql`
     query getPostWithReplies($id: ID!) {
   post(id: $id) {

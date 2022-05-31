@@ -2,7 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 
 import gql from 'graphql-tag'
-import { useGetRootPostsQuery, useGetPostWithRepliesQuery } from './generated/graphql'
+import { useSubRootPostsSubscription, useGetPostWithRepliesQuery } from './generated/graphql'
 import { Route, Link } from 'wouter';
 
 
@@ -49,7 +49,37 @@ function PostsList() {
     }
   }
   `
-  const { data, loading, error } = useGetRootPostsQuery()
+
+  gql`
+    subscription subRootPosts {
+      rootPosts {
+      text
+      id
+      user {
+        name
+      }
+      createdAt
+      replies {
+        user {
+          name
+        }
+        text
+        createdAt
+        id
+        replies {
+          user {
+            name
+          }
+          text
+          createdAt
+          id
+        }
+      }
+    }
+    }
+  `
+
+  const { data, loading, error } = useSubRootPostsSubscription()
 
   if (loading) return <>'Loading...'</>
 
@@ -183,11 +213,9 @@ function Post({ id }: { id: string }) {
 
 function App() {
   return (
-    <>
-      <body className="App-header">
-        <Router />
-      </body>
-    </>
+    <body className="App-header">
+      <Router />
+    </body>
   );
 }
 
