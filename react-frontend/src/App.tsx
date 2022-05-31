@@ -1,6 +1,6 @@
 import './App.css';
 import gql from 'graphql-tag'
-import { useGetPostWithRepliesQuery, useRootPostsSubscription, useCreateUserMutation } from './generated/graphql'
+import { useGetPostWithRepliesQuery, useRootPostsSubscription, useCreateUserMutation, useCreatePostMutation } from './generated/graphql'
 import { Route, Link, Redirect, useLocation } from 'wouter';
 import { createContext, FormEventHandler, useContext, useState } from 'react';
 
@@ -99,6 +99,7 @@ function PostsList() {
   if (error) return <>`Error! ${error.message}` </>
 
   return <div style={{ alignSelf: 'center' }}>
+    <PostForm />
     {data?.rootPosts.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)).map(post =>
       <div>
         <Link href={`/post/${post.id}`}>
@@ -137,6 +138,34 @@ function PostsList() {
     )
     }
   </div>
+}
+
+function PostForm() {
+  useAuth(true);
+  const userId = useContext(UserContext);
+
+
+  gql`
+  mutation createPost($text: String!, $userId: ID!) {
+    post(userId: $userId, text: $text) {
+      id
+    }
+  }
+  `
+
+  const [createPost, _] = useCreatePostMutation()
+
+  const [text, setText] = useState('')
+
+  return <form onSubmit={(ev) => {
+    ev.preventDefault();
+    createPost({ variables: { text: text, userId: userId ?? "" } })
+  }}>
+    <p>Post something!</p>
+    <input type="text" onChange={(e) => setText(e.target.value)} value={text} placeholder="I'm thinking of..." />
+    <button type="submit">Post!</button>
+  </form>
+
 }
 
 
@@ -261,8 +290,8 @@ function App() {
 
   const handleLogin = (name: string) => createUser({ variables: { name } })
 
-  // if (loading) return <h3>LOADING...</h3>
-  // if (error) return <h3>ERROR...</h3>
+  if (loading) return <h3>Loading...</h3>
+  if (error) return <h3>Error {error.message}</h3>
 
   const userId = data?.createUser?.id ?? '';
 

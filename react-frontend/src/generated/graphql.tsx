@@ -96,6 +96,14 @@ export type RootPostsSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 export type RootPostsSubscription = { __typename?: 'Subscription', rootPosts: Array<{ __typename?: 'Post', text: string, id: string, createdAt: string, user: { __typename?: 'User', name: string }, replies: Array<{ __typename?: 'Post', text: string, createdAt: string, id: string, user: { __typename?: 'User', name: string }, replies: Array<{ __typename?: 'Post', text: string, createdAt: string, id: string, user: { __typename?: 'User', name: string } }> }> }> };
 
+export type CreatePostMutationVariables = Exact<{
+  text: Scalars['String'];
+  userId: Scalars['ID'];
+}>;
+
+
+export type CreatePostMutation = { __typename?: 'Mutation', post?: { __typename?: 'Post', id: string } | null };
+
 export type GetPostWithRepliesQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
@@ -216,6 +224,40 @@ export function useRootPostsSubscription(baseOptions?: Apollo.SubscriptionHookOp
       }
 export type RootPostsSubscriptionHookResult = ReturnType<typeof useRootPostsSubscription>;
 export type RootPostsSubscriptionResult = Apollo.SubscriptionResult<RootPostsSubscription>;
+export const CreatePostDocument = gql`
+    mutation createPost($text: String!, $userId: ID!) {
+  post(userId: $userId, text: $text) {
+    id
+  }
+}
+    `;
+export type CreatePostMutationFn = Apollo.MutationFunction<CreatePostMutation, CreatePostMutationVariables>;
+
+/**
+ * __useCreatePostMutation__
+ *
+ * To run a mutation, you first call `useCreatePostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreatePostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createPostMutation, { data, loading, error }] = useCreatePostMutation({
+ *   variables: {
+ *      text: // value for 'text'
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useCreatePostMutation(baseOptions?: Apollo.MutationHookOptions<CreatePostMutation, CreatePostMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreatePostMutation, CreatePostMutationVariables>(CreatePostDocument, options);
+      }
+export type CreatePostMutationHookResult = ReturnType<typeof useCreatePostMutation>;
+export type CreatePostMutationResult = Apollo.MutationResult<CreatePostMutation>;
+export type CreatePostMutationOptions = Apollo.BaseMutationOptions<CreatePostMutation, CreatePostMutationVariables>;
 export const GetPostWithRepliesDocument = gql`
     query getPostWithReplies($id: ID!) {
   post(id: $id) {
