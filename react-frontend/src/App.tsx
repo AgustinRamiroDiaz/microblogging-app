@@ -55,9 +55,9 @@ function PostsList() {
 
   if (error) return <>`Error! ${error.message}` </>
 
-  return <>
+  return <div style={{ alignSelf: 'center' }}>
     {data?.rootPosts.map(post =>
-      <div style={{ margin: "2rem" }}>
+      <div>
         <Link href={`/post/${post.id}`}>
           <div>
             <p>@{post.user.name}</p>
@@ -90,8 +90,9 @@ function PostsList() {
 
         )}
       </div>
-    )}
-  </>
+    )
+    }
+  </div>
 }
 
 
@@ -138,47 +139,45 @@ function Post({ id }: { id: string }) {
   const post = data.post
   if (!post) return <>'Post not found'</>
 
-  return <>
-    <div style={{ margin: "2rem" }}>
-      <Link href='/'><button>
-        Go home
-      </button>
+  return <div style={{ alignSelf: 'center' }}>
+    <Link href='/'><button>
+      Go home
+    </button>
+    </Link>
+    {!post.isReplyOf && <p>@{post.user.name}</p>}
+    {
+      post.isReplyOf && <Link href={`/post/${post.isReplyOf.id}`}>
+        <p>@{post.user.name} replied to @{post.isReplyOf.user.name}</p>
       </Link>
-      {!post.isReplyOf && <p>@{post.user.name}</p>}
-      {
-        post.isReplyOf && <Link href={`/post/${post.isReplyOf.id}`}>
-          <p>@{post.user.name} replied to @{post.isReplyOf.user.name}</p>
+    }
+    <h2>{post.text}</h2>
+
+    {post.replies.map(reply =>
+      <div style={{ marginLeft: '4rem', borderLeft: '1px solid white' }}>
+        <Link href={`/post/${reply.id}`}>
+          <div style={{ margin: '1rem' }}>
+            <p>{reply.user.name} replied</p>
+            <h3>{reply.text}</h3>
+          </div>
         </Link>
-      }
-      <h2>{post.text}</h2>
 
-      {post.replies.map(reply =>
-        <div style={{ marginLeft: '4rem', borderLeft: '1px solid white' }}>
-          <Link href={`/post/${reply.id}`}>
-            <div style={{ margin: '1rem' }}>
-              <p>{reply.user.name} replied</p>
-              <h3>{reply.text}</h3>
-            </div>
-          </Link>
+        {
+          reply.replies.map(replyOfReply =>
+            <Link href={`/post/${replyOfReply.id}`}>
+              <div style={{ marginLeft: '4rem', borderLeft: '1px solid white' }}>
+                <div style={{ margin: '1rem' }}>
 
-          {
-            reply.replies.map(replyOfReply =>
-              <Link href={`/post/${replyOfReply.id}`}>
-                <div style={{ marginLeft: '4rem', borderLeft: '1px solid white' }}>
-                  <div style={{ margin: '1rem' }}>
-
-                    <p>{replyOfReply.user.name} replied</p>
-                    <h3>{replyOfReply.text}</h3>
-                  </div>
+                  <p>{replyOfReply.user.name} replied</p>
+                  <h3>{replyOfReply.text}</h3>
                 </div>
-              </Link>
-            )
-          }
-        </div>
+              </div>
+            </Link>
+          )
+        }
+      </div>
 
-      )}
-    </div>
-  </>
+    )}
+  </div>
 
 }
 
