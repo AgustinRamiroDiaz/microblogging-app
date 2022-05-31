@@ -89,7 +89,7 @@ export type User = {
 export type GetRootPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetRootPostsQuery = { __typename?: 'Query', rootPosts: Array<{ __typename?: 'Post', text: string, id: string }> };
+export type GetRootPostsQuery = { __typename?: 'Query', rootPosts: Array<{ __typename?: 'Post', text: string, id: string, createdAt: string, user: { __typename?: 'User', name: string }, replies: Array<{ __typename?: 'Post', text: string, createdAt: string, id: string, user: { __typename?: 'User', name: string }, replies: Array<{ __typename?: 'Post', text: string, createdAt: string, id: string, user: { __typename?: 'User', name: string } }> }> }> };
 
 export type GetPostWithRepliesQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -104,6 +104,26 @@ export const GetRootPostsDocument = gql`
   rootPosts {
     text
     id
+    user {
+      name
+    }
+    createdAt
+    replies {
+      user {
+        name
+      }
+      text
+      createdAt
+      id
+      replies {
+        user {
+          name
+        }
+        text
+        createdAt
+        id
+      }
+    }
   }
 }
     `;
