@@ -80,7 +80,7 @@ function PostsList() {
                     <div style={{ margin: '1rem' }}>
 
                       <p>@{replyOfReply.user.name}</p>
-                      <h2>{replyOfReply.text}</h2>
+                      <h3>{replyOfReply.text}</h3>
                     </div>
                   </div>
                 </Link>
@@ -168,7 +168,7 @@ function Post({ id }: { id: string }) {
                   <div style={{ margin: '1rem' }}>
 
                     <p>{replyOfReply.user.name} replied</p>
-                    <h2>{replyOfReply.text}</h2>
+                    <h3>{replyOfReply.text}</h3>
                   </div>
                 </div>
               </Link>
