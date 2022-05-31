@@ -1,16 +1,27 @@
-import logo from './logo.svg';
 import './App.css';
-
 import gql from 'graphql-tag'
-import { useSubRootPostsSubscription, useGetPostWithRepliesQuery } from './generated/graphql'
-import { Route, Link } from 'wouter';
+import { useGetPostWithRepliesQuery, useRootPostsSubscription, useCreateUserMutation } from './generated/graphql'
+import { Route, Link, Redirect, useLocation } from 'wouter';
+import { createContext, FormEventHandler, useContext, useState } from 'react';
 
+const UserContext = createContext<string | null>(null)
 
-function Router() {
+const useAuth = (requireAuth: boolean) => {
+  const userId = useContext(UserContext);
+  const [_, setLocation] = useLocation();
+
+  if (requireAuth && !userId) setLocation("/login");
+  else if (!requireAuth && userId) setLocation("/");
+}
+
+function Router({ handleLogin }: { handleLogin: (userId: string) => void }) {
   return (
     <>
       <Route path="/post/:id">
         {(params) => <Post id={params.id} />}
+      </Route>
+      <Route path="/login">
+        <Login onLogin={handleLogin} />
       </Route>
       <Route path="/">
         <PostsList />
@@ -21,6 +32,8 @@ function Router() {
 
 
 function PostsList() {
+  useAuth(true);
+
   gql`
   query getRootPosts {
     rootPosts {
@@ -51,7 +64,7 @@ function PostsList() {
   `
 
   gql`
-    subscription subRootPosts {
+    subscription rootPosts {
       rootPosts {
       text
       id
@@ -79,7 +92,7 @@ function PostsList() {
     }
   `
 
-  const { data, loading, error } = useSubRootPostsSubscription()
+  const { data, loading, error } = useRootPostsSubscription()
 
   if (loading) return <>'Loading...'</>
 
@@ -128,6 +141,8 @@ function PostsList() {
 
 
 function Post({ id }: { id: string }) {
+  useAuth(true);
+
   gql`
     query getPostWithReplies($id: ID!) {
       post(id: $id) {
@@ -212,11 +227,51 @@ function Post({ id }: { id: string }) {
 
 }
 
-function App() {
+function Login({ onLogin }: { onLogin: (name: string) => void }) {
+  useAuth(false);
+
+  const [name, setName] = useState('')
+  const setNameReactive = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const enteredName = event.target.value;
+    setName(enteredName);
+  };
+
   return (
-    <body className="App-header">
-      <Router />
-    </body>
+    <form onSubmit={(ev) => {
+      ev.preventDefault();
+      onLogin(name);
+    }}>
+      <p>Create your user</p>
+      <input type="text" onChange={setNameReactive} value={name} placeholder="cindy lopez" />
+      <button type="submit">Log in</button>
+    </form>
+  )
+}
+
+function App() {
+  gql`
+    mutation createUser($name: String!) {
+      createUser(name: $name) {
+        id
+      }
+    }
+  `
+
+  const [createUser, { data, loading, error }] = useCreateUserMutation()
+
+  const handleLogin = (name: string) => createUser({ variables: { name } })
+
+  // if (loading) return <h3>LOADING...</h3>
+  // if (error) return <h3>ERROR...</h3>
+
+  const userId = data?.createUser?.id ?? '';
+
+  return (
+    <UserContext.Provider value={userId}>
+      <body className="App-header">
+        <Router handleLogin={handleLogin} />
+      </body>
+    </UserContext.Provider>
   );
 }
 

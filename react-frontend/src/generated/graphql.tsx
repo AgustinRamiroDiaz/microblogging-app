@@ -91,10 +91,10 @@ export type GetRootPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetRootPostsQuery = { __typename?: 'Query', rootPosts: Array<{ __typename?: 'Post', text: string, id: string, createdAt: string, user: { __typename?: 'User', name: string }, replies: Array<{ __typename?: 'Post', text: string, createdAt: string, id: string, user: { __typename?: 'User', name: string }, replies: Array<{ __typename?: 'Post', text: string, createdAt: string, id: string, user: { __typename?: 'User', name: string } }> }> }> };
 
-export type SubRootPostsSubscriptionVariables = Exact<{ [key: string]: never; }>;
+export type RootPostsSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SubRootPostsSubscription = { __typename?: 'Subscription', rootPosts: Array<{ __typename?: 'Post', text: string, id: string, createdAt: string, user: { __typename?: 'User', name: string }, replies: Array<{ __typename?: 'Post', text: string, createdAt: string, id: string, user: { __typename?: 'User', name: string }, replies: Array<{ __typename?: 'Post', text: string, createdAt: string, id: string, user: { __typename?: 'User', name: string } }> }> }> };
+export type RootPostsSubscription = { __typename?: 'Subscription', rootPosts: Array<{ __typename?: 'Post', text: string, id: string, createdAt: string, user: { __typename?: 'User', name: string }, replies: Array<{ __typename?: 'Post', text: string, createdAt: string, id: string, user: { __typename?: 'User', name: string }, replies: Array<{ __typename?: 'Post', text: string, createdAt: string, id: string, user: { __typename?: 'User', name: string } }> }> }> };
 
 export type GetPostWithRepliesQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -102,6 +102,13 @@ export type GetPostWithRepliesQueryVariables = Exact<{
 
 
 export type GetPostWithRepliesQuery = { __typename?: 'Query', post?: { __typename?: 'Post', text: string, createdAt: string, user: { __typename?: 'User', name: string }, replies: Array<{ __typename?: 'Post', text: string, createdAt: string, id: string, user: { __typename?: 'User', name: string }, replies: Array<{ __typename?: 'Post', text: string, createdAt: string, id: string, user: { __typename?: 'User', name: string } }> }>, isReplyOf?: { __typename?: 'Post', id: string, user: { __typename?: 'User', name: string } } | null } | null };
+
+export type CreateUserMutationVariables = Exact<{
+  name: Scalars['String'];
+}>;
+
+
+export type CreateUserMutation = { __typename?: 'Mutation', createUser?: { __typename?: 'User', id: string } | null };
 
 
 export const GetRootPostsDocument = gql`
@@ -159,8 +166,8 @@ export function useGetRootPostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetRootPostsQueryHookResult = ReturnType<typeof useGetRootPostsQuery>;
 export type GetRootPostsLazyQueryHookResult = ReturnType<typeof useGetRootPostsLazyQuery>;
 export type GetRootPostsQueryResult = Apollo.QueryResult<GetRootPostsQuery, GetRootPostsQueryVariables>;
-export const SubRootPostsDocument = gql`
-    subscription subRootPosts {
+export const RootPostsDocument = gql`
+    subscription rootPosts {
   rootPosts {
     text
     id
@@ -189,26 +196,26 @@ export const SubRootPostsDocument = gql`
     `;
 
 /**
- * __useSubRootPostsSubscription__
+ * __useRootPostsSubscription__
  *
- * To run a query within a React component, call `useSubRootPostsSubscription` and pass it any options that fit your needs.
- * When your component renders, `useSubRootPostsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useRootPostsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useRootPostsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSubRootPostsSubscription({
+ * const { data, loading, error } = useRootPostsSubscription({
  *   variables: {
  *   },
  * });
  */
-export function useSubRootPostsSubscription(baseOptions?: Apollo.SubscriptionHookOptions<SubRootPostsSubscription, SubRootPostsSubscriptionVariables>) {
+export function useRootPostsSubscription(baseOptions?: Apollo.SubscriptionHookOptions<RootPostsSubscription, RootPostsSubscriptionVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useSubscription<SubRootPostsSubscription, SubRootPostsSubscriptionVariables>(SubRootPostsDocument, options);
+        return Apollo.useSubscription<RootPostsSubscription, RootPostsSubscriptionVariables>(RootPostsDocument, options);
       }
-export type SubRootPostsSubscriptionHookResult = ReturnType<typeof useSubRootPostsSubscription>;
-export type SubRootPostsSubscriptionResult = Apollo.SubscriptionResult<SubRootPostsSubscription>;
+export type RootPostsSubscriptionHookResult = ReturnType<typeof useRootPostsSubscription>;
+export type RootPostsSubscriptionResult = Apollo.SubscriptionResult<RootPostsSubscription>;
 export const GetPostWithRepliesDocument = gql`
     query getPostWithReplies($id: ID!) {
   post(id: $id) {
@@ -270,3 +277,36 @@ export function useGetPostWithRepliesLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type GetPostWithRepliesQueryHookResult = ReturnType<typeof useGetPostWithRepliesQuery>;
 export type GetPostWithRepliesLazyQueryHookResult = ReturnType<typeof useGetPostWithRepliesLazyQuery>;
 export type GetPostWithRepliesQueryResult = Apollo.QueryResult<GetPostWithRepliesQuery, GetPostWithRepliesQueryVariables>;
+export const CreateUserDocument = gql`
+    mutation createUser($name: String!) {
+  createUser(name: $name) {
+    id
+  }
+}
+    `;
+export type CreateUserMutationFn = Apollo.MutationFunction<CreateUserMutation, CreateUserMutationVariables>;
+
+/**
+ * __useCreateUserMutation__
+ *
+ * To run a mutation, you first call `useCreateUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createUserMutation, { data, loading, error }] = useCreateUserMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useCreateUserMutation(baseOptions?: Apollo.MutationHookOptions<CreateUserMutation, CreateUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateUserMutation, CreateUserMutationVariables>(CreateUserDocument, options);
+      }
+export type CreateUserMutationHookResult = ReturnType<typeof useCreateUserMutation>;
+export type CreateUserMutationResult = Apollo.MutationResult<CreateUserMutation>;
+export type CreateUserMutationOptions = Apollo.BaseMutationOptions<CreateUserMutation, CreateUserMutationVariables>;
