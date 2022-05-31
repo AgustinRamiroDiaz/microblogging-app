@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi"
@@ -39,6 +40,7 @@ func main() {
 			},
 		},
 	})
+	srv.Use(extension.Introspection{})
 
 	router := chi.NewRouter()
 	// Add CORS middleware around every request
