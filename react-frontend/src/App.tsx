@@ -57,7 +57,7 @@ function PostsList() {
 
   return <>
     {data?.rootPosts.map(post =>
-      <div style={{ margin: "1rem" }}>
+      <div style={{ margin: "2rem" }}>
         <Link href={`/post/${post.id}`}>
           <div>
             <p>@{post.user.name}</p>
@@ -76,7 +76,7 @@ function PostsList() {
             {
               reply.replies.map(replyOfReply =>
                 <Link href={`/post/${replyOfReply.id}`}>
-                  <div style={{ marginLeft: '8rem', borderLeft: '1px solid white' }}>
+                  <div style={{ marginLeft: '4rem', borderLeft: '1px solid white' }}>
                     <div style={{ margin: '1rem' }}>
 
                       <p>@{replyOfReply.user.name}</p>
@@ -139,7 +139,7 @@ function Post({ id }: { id: string }) {
   if (!post) return <>'Post not found'</>
 
   return <>
-    <div style={{ margin: "1rem" }}>
+    <div style={{ margin: "2rem" }}>
       <Link href='/'><button>
         Go home
       </button>
@@ -164,7 +164,7 @@ function Post({ id }: { id: string }) {
           {
             reply.replies.map(replyOfReply =>
               <Link href={`/post/${replyOfReply.id}`}>
-                <div style={{ marginLeft: '8rem', borderLeft: '1px solid white' }}>
+                <div style={{ marginLeft: '4rem', borderLeft: '1px solid white' }}>
                   <div style={{ margin: '1rem' }}>
 
                     <p>{replyOfReply.user.name} replied</p>
