@@ -86,7 +86,7 @@ function PostsList() {
   if (error) return <>`Error! ${error.message}` </>
 
   return <div style={{ alignSelf: 'center' }}>
-    {data?.rootPosts.map(post =>
+    {data?.rootPosts.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)).map(post =>
       <div>
         <Link href={`/post/${post.id}`}>
           <div>
@@ -94,7 +94,8 @@ function PostsList() {
             <h2>{post.text}</h2>
           </div>
         </Link>
-        {post.replies.map(reply =>
+
+        {[...post.replies].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)).map(reply =>
           <div style={{ marginLeft: '4rem', borderLeft: '1px solid white' }}>
             <Link href={`/post/${reply.id}`}>
               <div style={{ margin: '1rem' }}>
@@ -104,7 +105,7 @@ function PostsList() {
             </Link>
 
             {
-              reply.replies.map(replyOfReply =>
+              [...reply.replies].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)).map(replyOfReply =>
                 <Link href={`/post/${replyOfReply.id}`}>
                   <div style={{ marginLeft: '4rem', borderLeft: '1px solid white' }}>
                     <div style={{ margin: '1rem' }}>
@@ -182,7 +183,7 @@ function Post({ id }: { id: string }) {
     }
     <h2>{post.text}</h2>
 
-    {post.replies.map(reply =>
+    {[...post.replies].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)).map(reply =>
       <div style={{ marginLeft: '4rem', borderLeft: '1px solid white' }}>
         <Link href={`/post/${reply.id}`}>
           <div style={{ margin: '1rem' }}>
@@ -192,7 +193,7 @@ function Post({ id }: { id: string }) {
         </Link>
 
         {
-          reply.replies.map(replyOfReply =>
+          [...reply.replies].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)).map(replyOfReply =>
             <Link href={`/post/${replyOfReply.id}`}>
               <div style={{ marginLeft: '4rem', borderLeft: '1px solid white' }}>
                 <div style={{ margin: '1rem' }}>
