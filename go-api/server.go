@@ -28,7 +28,7 @@ func main() {
 
 	srv := handler.New(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{
 		UserRepository:  repository.NewUserRepositoryInMemory(),
-		PostStorage:     map[string]*model.Post{},
+		PostRepository:  repository.NewPostRepositoryInMemory(),
 		PostSubscribers: map[string][]chan *model.Post{},
 	}}))
 

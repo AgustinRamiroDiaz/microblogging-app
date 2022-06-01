@@ -10,10 +10,14 @@ import (
 )
 
 func (r *subscriptionResolver) RootPosts(ctx context.Context) (<-chan []*model.Post, error) {
+	rootPosts, err := r.PostRepository.ListRoot(ctx)
+	if err != nil {
+		return nil, err
+	}
 	ch := make(chan []*model.Post)
 	r.RootPostSubscribers = append(r.RootPostSubscribers, ch)
 	go func() {
-		ch <- getRootPosts(r.PostStorage)
+		ch <- rootPosts
 		<-ctx.Done()
 		for i, subscriber := range r.RootPostSubscribers {
 			if subscriber == ch {
@@ -26,7 +30,10 @@ func (r *subscriptionResolver) RootPosts(ctx context.Context) (<-chan []*model.P
 }
 
 func (r *subscriptionResolver) Post(ctx context.Context, id string) (<-chan *model.Post, error) {
-	post := r.PostStorage[id]
+	post, err := r.PostRepository.Get(ctx, id)
+	if err != nil {
+		return nil, err
+	}
 	ch := make(chan *model.Post)
 	r.PostSubscribers[id] = append(r.PostSubscribers[id], ch)
 	go func() {
