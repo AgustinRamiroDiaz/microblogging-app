@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { Button } from "react-bootstrap";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { useCreatePostMutation } from "../generated/graphql";
 import { useContext, useState } from "react";
 import { useAuth, UserContext } from "../App";
@@ -28,16 +28,19 @@ export function PostForm() {
         setText("");
       }}
     >
-      <p>Post something!</p>
-      <input
-        type="text"
-        onChange={(e) => setText(e.target.value)}
-        value={text}
-        placeholder="I'm thinking of..."
-      />
-      <Button type="submit" variant="btn btn-primary">
-        Post!
-      </Button>
+      <div style={{ display: "flex" }}>
+        <div>
+          <Form.Control
+            type="text"
+            onChange={(e) => setText(e.target.value)}
+            value={text}
+            placeholder="Post something"
+          />
+        </div>
+        <Button type="submit" variant="btn btn-primary" size="sm">
+          Post!
+        </Button>
+      </div>
     </form>
   );
 }
