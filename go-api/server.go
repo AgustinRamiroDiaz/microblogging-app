@@ -4,6 +4,7 @@ import (
 	"api/graph"
 	"api/graph/generated"
 	"api/graph/model"
+	"api/repository"
 	"log"
 	"net/http"
 	"os"
@@ -26,7 +27,7 @@ func main() {
 	}
 
 	srv := handler.New(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{
-		UserStorage:     map[string]*model.User{},
+		UserRepository:  repository.NewUserRepositoryInMemory(),
 		PostStorage:     map[string]*model.Post{},
 		PostSubscribers: map[string][]chan *model.Post{},
 	}}))
