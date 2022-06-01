@@ -47,6 +47,8 @@ func main() {
 	// See https://github.com/rs/cors for full option listing
 	router.Use(cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		AllowCredentials: true,
 		Debug:            true,
 	}).Handler)
