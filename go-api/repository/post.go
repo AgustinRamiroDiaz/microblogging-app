@@ -114,6 +114,7 @@ func (r *PostRepositoryInMemory) Reply(ctx context.Context, text string, postId 
 		IsReplyOfId: postId,
 		CreatedAt:   time.Now().Format(time.RFC3339),
 	}
+	r.PostStorage[replyId] = reply
 	post.RepliesIds = append(post.RepliesIds, replyId)
 	r.PostCounter++
 	return reply, nil
