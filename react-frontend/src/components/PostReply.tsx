@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { Button, Form } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { useReplyPostMutation } from "../generated/graphql";
 import { useContext, useState } from "react";
 import { useAuth, UserContext } from "../App";
