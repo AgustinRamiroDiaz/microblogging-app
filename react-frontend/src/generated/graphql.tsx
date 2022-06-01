@@ -93,12 +93,12 @@ export type CreateUserMutationVariables = Exact<{
 
 export type CreateUserMutation = { __typename?: 'Mutation', createUser?: { __typename?: 'User', id: string } | null };
 
-export type GetPostWithRepliesQueryVariables = Exact<{
+export type PostWithRepliesSubscriptionVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type GetPostWithRepliesQuery = { __typename?: 'Query', post?: { __typename?: 'Post', text: string, createdAt: string, user: { __typename?: 'User', name: string }, replies: Array<{ __typename?: 'Post', text: string, createdAt: string, id: string, user: { __typename?: 'User', name: string }, replies: Array<{ __typename?: 'Post', text: string, createdAt: string, id: string, user: { __typename?: 'User', name: string } }> }>, isReplyOf?: { __typename?: 'Post', id: string, user: { __typename?: 'User', name: string } } | null } | null };
+export type PostWithRepliesSubscription = { __typename?: 'Subscription', post?: { __typename?: 'Post', text: string, createdAt: string, user: { __typename?: 'User', name: string }, replies: Array<{ __typename?: 'Post', text: string, createdAt: string, id: string, user: { __typename?: 'User', name: string }, replies: Array<{ __typename?: 'Post', text: string, createdAt: string, id: string, user: { __typename?: 'User', name: string } }> }>, isReplyOf?: { __typename?: 'Post', id: string, user: { __typename?: 'User', name: string } } | null } | null };
 
 export type CreatePostMutationVariables = Exact<{
   text: Scalars['String'];
@@ -161,8 +161,8 @@ export function useCreateUserMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreateUserMutationHookResult = ReturnType<typeof useCreateUserMutation>;
 export type CreateUserMutationResult = Apollo.MutationResult<CreateUserMutation>;
 export type CreateUserMutationOptions = Apollo.BaseMutationOptions<CreateUserMutation, CreateUserMutationVariables>;
-export const GetPostWithRepliesDocument = gql`
-    query getPostWithReplies($id: ID!) {
+export const PostWithRepliesDocument = gql`
+    subscription postWithReplies($id: ID!) {
   post(id: $id) {
     text
     user {
@@ -196,32 +196,27 @@ export const GetPostWithRepliesDocument = gql`
     `;
 
 /**
- * __useGetPostWithRepliesQuery__
+ * __usePostWithRepliesSubscription__
  *
- * To run a query within a React component, call `useGetPostWithRepliesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetPostWithRepliesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `usePostWithRepliesSubscription` and pass it any options that fit your needs.
+ * When your component renders, `usePostWithRepliesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetPostWithRepliesQuery({
+ * const { data, loading, error } = usePostWithRepliesSubscription({
  *   variables: {
  *      id: // value for 'id'
  *   },
  * });
  */
-export function useGetPostWithRepliesQuery(baseOptions: Apollo.QueryHookOptions<GetPostWithRepliesQuery, GetPostWithRepliesQueryVariables>) {
+export function usePostWithRepliesSubscription(baseOptions: Apollo.SubscriptionHookOptions<PostWithRepliesSubscription, PostWithRepliesSubscriptionVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetPostWithRepliesQuery, GetPostWithRepliesQueryVariables>(GetPostWithRepliesDocument, options);
+        return Apollo.useSubscription<PostWithRepliesSubscription, PostWithRepliesSubscriptionVariables>(PostWithRepliesDocument, options);
       }
-export function useGetPostWithRepliesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPostWithRepliesQuery, GetPostWithRepliesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetPostWithRepliesQuery, GetPostWithRepliesQueryVariables>(GetPostWithRepliesDocument, options);
-        }
-export type GetPostWithRepliesQueryHookResult = ReturnType<typeof useGetPostWithRepliesQuery>;
-export type GetPostWithRepliesLazyQueryHookResult = ReturnType<typeof useGetPostWithRepliesLazyQuery>;
-export type GetPostWithRepliesQueryResult = Apollo.QueryResult<GetPostWithRepliesQuery, GetPostWithRepliesQueryVariables>;
+export type PostWithRepliesSubscriptionHookResult = ReturnType<typeof usePostWithRepliesSubscription>;
+export type PostWithRepliesSubscriptionResult = Apollo.SubscriptionResult<PostWithRepliesSubscription>;
 export const CreatePostDocument = gql`
     mutation createPost($text: String!, $userId: ID!) {
   post(userId: $userId, text: $text) {

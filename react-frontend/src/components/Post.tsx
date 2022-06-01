@@ -1,13 +1,15 @@
 import gql from "graphql-tag";
-import { useGetPostWithRepliesQuery } from "../generated/graphql";
+import { Button } from "react-bootstrap";
+import { usePostWithRepliesSubscription } from "../generated/graphql";
 import { Link } from "wouter";
 import { useAuth } from "../App";
+import { PostReply } from "./PostReply";
 
 export function Post({ id }: { id: string }) {
   useAuth(true);
 
   gql`
-    query getPostWithReplies($id: ID!) {
+    subscription postWithReplies($id: ID!) {
       post(id: $id) {
         text
         user {
@@ -39,7 +41,7 @@ export function Post({ id }: { id: string }) {
       }
     }
   `;
-  const { data, loading, error } = useGetPostWithRepliesQuery({
+  const { data, loading, error } = usePostWithRepliesSubscription({
     variables: { id },
   });
 
@@ -53,7 +55,7 @@ export function Post({ id }: { id: string }) {
   return (
     <>
       <Link href="/">
-        <button>Go home</button>
+        <Button>Go home</Button>
       </Link>
       {!post.isReplyOf && <p>@{post.user.name}</p>}
       {post.isReplyOf && (
@@ -64,6 +66,7 @@ export function Post({ id }: { id: string }) {
         </Link>
       )}
       <h2>{post.text}</h2>
+      <PostReply postId={id} />
 
       {[...post.replies]
         .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
