@@ -32,9 +32,12 @@ func NewPostRepositoryInMemory() PostRepository {
 func (r *PostRepositoryInMemory) Create(ctx context.Context, text string, userId string) (*model.Post, error) {
 	id := fmt.Sprintf("%d", r.PostCounter)
 	post := &model.Post{
-		ID:     id,
-		Text:   text,
-		UserId: userId,
+		ID:          id,
+		Text:        text,
+		UserId:      userId,
+		CreatedAt:   time.Now().Format(time.RFC3339),
+		IsReplyOfId: "",
+		RepliesIds:  []string{},
 	}
 	r.PostStorage[id] = post
 	r.PostCounter++
