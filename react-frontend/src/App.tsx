@@ -1,4 +1,5 @@
 import "./App.css";
+import "bootstrap/dist/css/bootstrap.css";
 import gql from "graphql-tag";
 import { useCreateUserMutation } from "./generated/graphql";
 import { Route, useLocation } from "wouter";
@@ -11,7 +12,7 @@ export const UserContext = createContext<string | null>(null);
 
 export const useAuth = (requireAuth: boolean) => {
   const userId = useContext(UserContext);
-  const [_, setLocation] = useLocation();
+  const [, setLocation] = useLocation();
 
   if (requireAuth && !userId) setLocation("/login");
   else if (!requireAuth && userId) setLocation("/");
@@ -52,7 +53,9 @@ function App() {
   return (
     <UserContext.Provider value={userId}>
       <body className="App-header">
-        <Router handleLogin={handleLogin} />
+        <div style={{ alignSelf: "center" }}>
+          <Router handleLogin={handleLogin} />
+        </div>
       </body>
     </UserContext.Provider>
   );

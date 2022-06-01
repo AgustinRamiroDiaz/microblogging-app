@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import { Button } from "react-bootstrap";
 import { useCreatePostMutation } from "../generated/graphql";
 import { useContext, useState } from "react";
 import { useAuth, UserContext } from "../App";
@@ -15,7 +16,7 @@ export function PostForm() {
     }
   `;
 
-  const [createPost, _] = useCreatePostMutation();
+  const [createPost] = useCreatePostMutation();
 
   const [text, setText] = useState("");
 
@@ -33,7 +34,9 @@ export function PostForm() {
         value={text}
         placeholder="I'm thinking of..."
       />
-      <button type="submit">Post!</button>
+      <Button type="submit" variant="btn btn-primary">
+        Post!
+      </Button>
     </form>
   );
 }

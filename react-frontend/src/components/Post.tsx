@@ -51,7 +51,7 @@ export function Post({ id }: { id: string }) {
   if (!post) return <>'Post not found'</>;
 
   return (
-    <div style={{ alignSelf: "center" }}>
+    <>
       <Link href="/">
         <button>Go home</button>
       </Link>
@@ -95,6 +95,6 @@ export function Post({ id }: { id: string }) {
               ))}
           </div>
         ))}
-    </div>
+    </>
   );
 }

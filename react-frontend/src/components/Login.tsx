@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Button, Form } from "react-bootstrap";
 import { useAuth } from "../App";
 
 export function Login({ onLogin }: { onLogin: (name: string) => void }) {
@@ -18,13 +19,14 @@ export function Login({ onLogin }: { onLogin: (name: string) => void }) {
       }}
     >
       <p>Create your user</p>
-      <input
-        type="text"
+      <Form.Control
         onChange={setNameReactive}
         value={name}
         placeholder="cindy lopez"
       />
-      <button type="submit">Log in</button>
+      <Button type="submit" variant="btn btn-primary">
+        Log in
+      </Button>
     </form>
   );
 }

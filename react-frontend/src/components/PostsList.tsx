@@ -72,7 +72,7 @@ export function PostsList() {
   if (error) return <>`Error! ${error.message}` </>;
 
   return (
-    <div style={{ alignSelf: "center" }}>
+    <>
       <PostForm />
       {data?.rootPosts
         .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
@@ -122,6 +122,6 @@ export function PostsList() {
               ))}
           </div>
         ))}
-    </div>
+    </>
   );
 }
