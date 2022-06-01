@@ -3,7 +3,7 @@ services:
   api:
     build: 
       context: go-api
-    command: air
+    command: go run .
     ports:
       - 8080:8080
     # volumes:
