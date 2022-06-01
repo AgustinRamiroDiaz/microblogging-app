@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import { useCreatePostMutation } from "../generated/graphql";
 import { useContext, useState } from "react";
 import { useAuth, UserContext } from "../App";
