@@ -7,23 +7,41 @@ import (
 	"api/graph/generated"
 	"api/graph/model"
 	"context"
-	"fmt"
 )
 
 func (r *postResolver) User(ctx context.Context, obj *model.Post) (*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
+	return r.UserRepository.Get(ctx, obj.UserId)
 }
 
 func (r *postResolver) Replies(ctx context.Context, obj *model.Post) ([]*model.Post, error) {
-	panic(fmt.Errorf("not implemented"))
+	replies := make([]*model.Post, 0, len(obj.RepliesIds))
+	for _, replyId := range obj.RepliesIds {
+		reply, err := r.PostRepository.Get(ctx, replyId)
+		if err != nil {
+			return nil, err
+		}
+		replies = append(replies, reply)
+	}
+	return replies, nil
 }
 
 func (r *postResolver) IsReplyOf(ctx context.Context, obj *model.Post) (*model.Post, error) {
-	panic(fmt.Errorf("not implemented"))
+	if obj.IsReplyOfId == "" {
+		return nil, nil
+	}
+	return r.PostRepository.Get(ctx, obj.IsReplyOfId)
 }
 
 func (r *userResolver) Posts(ctx context.Context, obj *model.User) ([]*model.Post, error) {
-	panic(fmt.Errorf("not implemented"))
+	posts := make([]*model.Post, 0, len(obj.PostsIds))
+	for _, postId := range obj.PostsIds {
+		post, err := r.PostRepository.Get(ctx, postId)
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, post)
+	}
+	return posts, nil
 }
 
 // Post returns generated.PostResolver implementation.
