@@ -73,12 +73,12 @@ func (r *PostRepositoryInMemory) GetPostAndReplies(ctx context.Context, id strin
 	}
 
 	posts := []*model.Post{post}
-	for post.IsReplyOfId != "" {
-		post, err = r.Get(ctx, post.IsReplyOfId)
+	for _, replyId := range post.RepliesIds {
+		replies, err := r.GetPostAndReplies(ctx, replyId)
 		if err != nil {
 			return nil, err
 		}
-		posts = append(posts, post)
+		posts = append(posts, replies...)
 	}
 	return posts, nil
 }
