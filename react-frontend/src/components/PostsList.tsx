@@ -75,13 +75,15 @@ export function PostsList() {
 
   return (
     <>
-      <PostForm />
+      <div style={{ margin: "1rem" }}>
+        <PostForm />
+      </div>
       {data?.rootPosts
         .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
         .map((post) => (
-          <div>
+          <div style={{ borderTop: "1px solid white" }}>
             <Container>
-              <Row>
+              <Row className="align-items-center">
                 <Col>
                   <Link href={`/post/${post.id}`}>
                     <div>
