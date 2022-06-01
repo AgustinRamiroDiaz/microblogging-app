@@ -1,0 +1,19 @@
+services:
+  api:
+    build: 
+      context: go-api
+    command: air
+    ports:
+      - 8080:8080
+    volumes:
+      - go-api:/app
+  
+  ui:
+    build: 
+      context: react-frontend
+    ports:
+      - 3000:3000
+      - 8080:8080
+    volumes:
+      - react-frontend:/usr/src/app
+    command: npm start
