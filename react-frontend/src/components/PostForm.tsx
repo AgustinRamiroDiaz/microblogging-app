@@ -25,6 +25,7 @@ export function PostForm() {
       onSubmit={(ev) => {
         ev.preventDefault();
         createPost({ variables: { text: text, userId: userId ?? "" } });
+        setText("");
       }}
     >
       <p>Post something!</p>
